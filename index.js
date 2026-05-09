@@ -82,7 +82,7 @@ export default {
             },
             body: JSON.stringify({ 
               to: env.LINE_USER_ID, 
-              messages: [{ type: "text", text: "♻️ 達標通知：目前量已達 " + count }] 
+              messages: [{ type: "text", text: "♻️ 數量超過囉請盡快回收：目前量已達 " + count }] 
             })
           });
         }
