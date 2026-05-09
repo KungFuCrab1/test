@@ -1,3 +1,10 @@
 name = "test"
-main = "./index.js"
+main = "index.js"
 compatibility_date = "2026-05-09"
+
+[vars]
+GH_REPO = "KungFuCrab1/test"
+LINE_USER_ID ="Ucf5ad61fbda9a3c9f7574a6f409297b4"
+GH_TOKEN = "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"
+LINE_ACCESS_TOKEN="4qa7BNym0DtBtDV3B6wL7DjFSJAl5asgj4uDV2QvTVrvfTVBmZFyL6u8VkR9f1B01csY/6jdJifKo+wp20UvUL h1xgqNdkrWC88DLtdFR9z/C0gyXBKJAe0Qq/Ao9pox//W2Iu0BtI6g0mBkSJ0DAAdB04t89/1O/w1cDnyilFU="
+# 雖然可以寫 Token，但為了安全，Token 建議放在網頁介面的 "Secrets"
