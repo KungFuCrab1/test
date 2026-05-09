@@ -1,0 +1,55 @@
+export default {
+  async fetch(request, env, ctx) {
+    if (request.method !== "POST") {
+      return new Response("請使用 POST 請求", { status: 405 });
+    }
+
+    try {
+      const esp32Data = await request.json();
+      const fileName = "data.json";
+      const filePath = `https://api.github.com/repos/${env.GH_REPO}/contents/${fileName}`;
+
+      // 1. 先獲取檔案目前的 SHA（更新 GitHub 檔案必須要有 SHA）
+      let sha = "";
+      const getFile = await fetch(filePath, {
+        headers: {
+          "Authorization": `token ${env.GH_TOKEN}`,
+          "User-Agent": "Cloudflare-Worker"
+        }
+      });
+
+      if (getFile.status === 200) {
+        const fileData = await getFile.json();
+        sha = fileData.sha;
+      }
+
+      // 2. 準備要上傳的內容 (需轉為 Base64)
+      const content = btoa(JSON.stringify(esp32Data, null, 2));
+
+      // 3. 提交到 GitHub
+      const putFile = await fetch(filePath, {
+        method: "PUT",
+        headers: {
+          "Authorization": `token ${env.GH_TOKEN}`,
+          "User-Agent": "Cloudflare-Worker",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: `ESP32 自動上傳 - ${new Date().toISOString()}`,
+          content: content,
+          sha: sha // 如果是新檔案則為空字串，舊檔案必須提供
+        })
+      });
+
+      if (putFile.ok) {
+        return new Response("數據已成功同步至 GitHub!", { status: 200 });
+      } else {
+        const errorText = await putFile.text();
+        return new Response("GitHub 寫入失敗: " + errorText, { status: 500 });
+      }
+
+    } catch (err) {
+      return new Response("錯誤: " + err.message, { status: 500 });
+    }
+  }
+};
